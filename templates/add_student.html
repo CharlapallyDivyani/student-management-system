@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student - Student Management System{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Add New Student</h1>
+    
+    <form method="POST" class="form">
+        <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="enrollment_number">Enrollment Number *</label>
+            <input type="text" id="enrollment_number" name="enrollment_number" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone">
+        </div>
+
+        <div class="form-group">
+            <label for="course">Course *</label>
+            <select id="course" name="course" required>
+                <option value="">Select a course</option>
+                <option value="B.Tech - CS">B.Tech - Computer Science</option>
+                <option value="B.Tech - IT">B.Tech - Information Technology</option>
+                <option value="B.Tech - ECE">B.Tech - Electronics</option>
+                <option value="B.Tech - ME">B.Tech - Mechanical</option>
+                <option value="B.Com">Bachelor of Commerce</option>
+                <option value="B.A">Bachelor of Arts</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" name="dob">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Student</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Management System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Dashboard</h1>
+    
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search by name, enrollment number, or email...">
+        <div id="searchResults" class="search-results hidden"></div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Total Students</h3>
+            <p class="stat-number">{{ students|length }}</p>
+        </div>
+    </div>
+
+    <div class="students-table">
+        <h2>All Students</h2>
+        {% if students %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Enrollment #</th>
+                    <th>Course</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.phone }}</td>
+                    <td>{{ student.enrollment_number }}</td>
+                    <td>{{ student.course }}</td>
+                    <td>
+                        <a href="{{ url_for('view_student', student_id=student.id) }}" class="btn btn-small">View</a>
+                        <a href="{{ url_for('edit_student', student_id=student.id) }}" class="btn btn-small">Edit</a>
+                        <form method="POST" action="{{ url_for('delete_student', student_id=student.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Delete this student?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">No students found. <a href="{{ url_for('add_student') }}">Add one now</a></p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function(e) {
+        const query = e.target.value;
+        if (query.length > 0) {
+            fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                .then(r => r.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('searchResults');
+                    resultsDiv.innerHTML = '';
+                    if (data.length > 0) {
+                        resultsDiv.classList.remove('hidden');
+                        data.forEach(student => {
+                            const div = document.createElement('div');
+                            div.className = 'search-result-item';
+                            div.innerHTML = `<a href="/student/${student.id}">${student.name} (${student.enrollment_number})</a>`;
+                            resultsDiv.appendChild(div);
+                        });
+                    } else {
+                        resultsDiv.classList.add('hidden');
+                    }
+                });
+        } else {
+            document.getElementById('searchResults').classList.add('hidden');
+        }
+    });
+</script>
+{% endblock %}

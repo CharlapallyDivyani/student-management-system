@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance - Student Management System{% endblock %}
+
+{% block content %}
+<div class="attendance-container">
+    <h1>Mark Attendance</h1>
+    
+    <div class="date-selector">
+        <label for="attendanceDate">Date:</label>
+        <input type="date" id="attendanceDate">
+    </div>
+
+    <div class="attendance-grid">
+        {% for student in students %}
+        <div class="attendance-card">
+            <div class="student-name">{{ student.name }}</div>
+            <div class="student-enrollment">{{ student.enrollment_number }}</div>
+            <div class="attendance-buttons">
+                <button class="btn-attendance present" data-student-id="{{ student.id }}" data-status="Present">Present</button>
+                <button class="btn-attendance absent" data-student-id="{{ student.id }}" data-status="Absent">Absent</button>
+                <button class="btn-attendance leave" data-student-id="{{ student.id }}" data-status="Leave">Leave</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.btn-attendance').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const studentId = this.dataset.studentId;
+            const status = this.dataset.status;
+            const date = document.getElementById('attendanceDate').value;
+
+            if (!date) {
+                alert('Please select a date first');
+                return;
+            }
+
+            fetch('/api/attendance', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({student_id: studentId, date: date, status: status})
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // Change button style to show it's selected
+                    const card = this.parentElement;
+                    card.querySelectorAll('.btn-attendance').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
